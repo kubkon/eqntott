@@ -12,9 +12,7 @@
 extern int r_flag, R_flag;
 
 int 
-reduce (pts, npts)
-PTERM *pts[];
-int npts;
+reduce (PTERM *pts[], int npts)
 {
 	int i, changed = 1, merge (), duple (), rmcvd ();
 

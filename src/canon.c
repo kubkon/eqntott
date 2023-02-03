@@ -14,8 +14,7 @@
 #include "x.h"
 
 BNODE *
-canon (exp)
-BNODE *exp;
+canon (BNODE *exp)
 {
 	BNODE *tBnode;
 
@@ -93,8 +92,7 @@ BNODE *exp;
 #define ZERO_BNODE new_bnode( 0, NIL_BNODE, NIL_BNODE )
 
 BNODE *
-ecanon (exp)
-BNODE *exp;
+ecanon (BNODE *exp)
 {
 	BNODE *tBnode;
 

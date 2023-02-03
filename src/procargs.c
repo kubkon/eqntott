@@ -35,12 +35,17 @@ char *defkeyx ="iolpte";/* default labeled output format control string */
 char *defkeyf="iopfte";	/* default for -f option */
 char *defkeyfx="iolpfte";/* default for -f with -l option */
 
+void copyprefix( char* sout, char *sin ) {
+	while( (*sout++ = *sin++ ))
+		if( *sin == '.' )
+			break;
+	*sout = 0;
+}
+
 int
-procargs (argc, argv)
-int argc;
-char *argv[];
+procargs (int argc, char *argv[])
 {
-	register arg;
+	int register arg;
 	char *s;
 
 	ego = argv[0];
@@ -137,14 +142,7 @@ usage:
 	return (1);
 }
 
-copyprefix( sout, sin ) char *sout, *sin; {
-	while( *sout++ = *sin++ )
-		if( *sin == '.' )
-			break;
-	*sout = 0;
-}
-
-set_planame( name ) char *name; {
+void set_planame( char *name ) {
 	int i;
 	for( i = 0; name[i] != 0; i++ ) {
 		planame[i] = name[i];

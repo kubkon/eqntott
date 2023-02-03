@@ -9,8 +9,7 @@
 #include <stdio.h>
 #include "x.h"
 
-prexpr (exp)
-BNODE *exp;
+void prexpr (BNODE *exp)
 {
 	extern struct Nt nts[];
 	extern struct Nt *inorder[];
@@ -57,8 +56,7 @@ BNODE *exp;
 	return;
 }
 
-prlexpr (exp)
-BNODE *exp;
+void prlexpr (BNODE *exp)
 {
 	extern struct Nt nts[];
 	extern struct Nt *inorder[];
@@ -106,8 +104,45 @@ BNODE *exp;
 	return;
 }
 
-prgexpr (exp, node, kind)
-BNODE *exp;
+void prnode( int num, int kind )
+{
+  extern struct Nt *inorder[], *outorder[];
+	switch( kind ) {
+	case INPUT:
+		switch( num ) {
+		case ZERO:
+			printf( " ZERO" );
+			break;
+		case ONE:
+			printf( " ONE" );
+			break;
+		case DONTCARE:
+			printf( " DONTCARE");
+			break;
+		default:
+			printf( " %s", inorder[num]->name );
+			break;
+		}
+		break;
+	case OUTPUT:
+		printf( " %s", outorder[num]->name );
+		break;
+	case INTERNAL:
+		printf( " %d", num );
+		break;
+	default:
+		printf( "internal error: unknown kind in prnode\n" );
+	}
+}
+
+static int c_node = MIN_GNODE;
+
+int new_num() {
+	return( ++c_node );
+}
+
+void 
+prgexpr (BNODE *exp, int node, int kind)
 {
 	extern struct Nt nts[];
 	extern struct Nt *inorder[], *outorder[];
@@ -189,41 +224,4 @@ BNODE *exp;
 	}
 
 	return;
-}
-
-prnode( num, kind )
-{
-  extern struct Nt *inorder[], *outorder[];
-	switch( kind ) {
-	case INPUT:
-		switch( num ) {
-		case ZERO:
-			printf( " ZERO" );
-			break;
-		case ONE:
-			printf( " ONE" );
-			break;
-		case DONTCARE:
-			printf( " DONTCARE");
-			break;
-		default:
-			printf( " %s", inorder[num]->name );
-			break;
-		}
-		break;
-	case OUTPUT:
-		printf( " %s", outorder[num]->name );
-		break;
-	case INTERNAL:
-		printf( " %d", num );
-		break;
-	default:
-		printf( "internal error: unknown kind in prnode\n" );
-	}
-}
-
-static int c_node = MIN_GNODE;
-
-new_num() {
-	return( ++c_node );
 }

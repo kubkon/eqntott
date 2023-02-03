@@ -25,6 +25,7 @@ extern int f_flag, s_flag;
  * initialize name table
  */
 
+void
 nt_init ()
 {
 	register struct Nt *p = nts;
@@ -41,8 +42,7 @@ nt_init ()
  */
 
 struct Nt *
-nt_update (name)
-char *name;
+nt_update (char *name)
 {
 	struct Nt *nt, *slot;
 	int nt_compar(), nt_open();
@@ -75,8 +75,7 @@ char *name;
  */
 
 int
-nt_input (name)
-char *name;
+nt_input (char *name)
 {
 	struct Nt *nt;
 
@@ -104,8 +103,7 @@ char *name;
  */
 
 int
-nt_output (name)
-char *name;
+nt_output (char *name)
 {
 	struct Nt *nt;
 
@@ -129,16 +127,13 @@ char *name;
 }
 
 int
-nt_compar (nt1, nt2)
-char *nt1;
-struct Nt *nt2;
+nt_compar (char *nt1, struct Nt *nt2)
 {
 	return (strcmp (nt1, nt2->name));
 }
 
 int
-nt_open (nt)
-struct Nt *nt;
+nt_open (struct Nt *nt)
 {
 	return (!nt->name);
 }

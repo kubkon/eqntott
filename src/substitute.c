@@ -16,8 +16,7 @@ extern BNODE *exprs[];
 extern struct Nt *inorder[];
 
 int
-substitute (exp, new_exp)
-BNODE *exp, **new_exp;
+substitute (BNODE *exp, BNODE **new_exp)
 {
 	int changed = 0;
 	BNODE *copy_bnode();

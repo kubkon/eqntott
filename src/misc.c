@@ -14,8 +14,7 @@
  */
 
 char *
-store (s)
-register char *s;
+store (register char *s)
 {
 	register unsigned len = strlen (s) + 1;
 	register char *t = calloc (len, sizeof (char *));

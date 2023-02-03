@@ -11,9 +11,7 @@
 
 extern int ninputs, noutputs;
 
-cover (pts, npts)
-PTERM *pts[];
-int npts;
+void cover (PTERM *pts[], int npts)
 /*
  * run through all of the product terms and if a product term is
  * properly dominated by another, mark the former as covered.
@@ -37,9 +35,7 @@ int npts;
 }
 		
 PTERM *
-extant (pts, npts, pt)
-PTERM *pts[], *pt;
-int npts;
+extant (PTERM *pts[], int npts, PTERM *pt)
 /*
  * Try to find a product term with an and-plane which implies pt's 
  * and-plane as well as a compatible or-plane.

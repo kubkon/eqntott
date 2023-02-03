@@ -21,9 +21,7 @@ extern struct Nt nts[], *outorder[];
 extern char *ego;
 
 PTERM *
-read_ones  (exp, o)
-BNODE *exp;
-int o;
+read_ones  (BNODE *exp, int o)
 {
 	register PTERM *L, *R;
 	register int i;
@@ -109,9 +107,7 @@ int o;
 	}
 }
 
-contradiction (exp, o)
-BNODE *exp;
-int o;
+void contradiction (BNODE *exp, int o)
 /*
  * a logical contradiction has been found.
  */
@@ -124,8 +120,7 @@ int o;
 }
 
 PTERM *
-compress (pt)
-register PTERM *pt;
+compress (register PTERM *pt)
 {
 	extern PTERM *pts[];
 	register int i;

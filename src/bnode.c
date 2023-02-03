@@ -29,7 +29,7 @@
 static BNODE *freePtr = 0;
 
 static
-get_free ()
+void get_free ()
 {
 	register BNODE *bnodes;
 	register int i;
@@ -46,9 +46,7 @@ get_free ()
 }
 
 BNODE *
-new_bnode (value, left, right)
-int value;
-BNODE *left, *right;
+new_bnode (int value, BNODE *left, BNODE *right)
 {
 	register BNODE *bnode;
 
@@ -62,8 +60,7 @@ BNODE *left, *right;
 	return (bnode);
 }
 
-void free_bnode (bnode)
-register BNODE *bnode;
+void free_bnode (register BNODE *bnode)
 {
 	if (!bnode)
 		return;
@@ -73,8 +70,7 @@ register BNODE *bnode;
 }
 
 BNODE *
-copy_bnode (old)
-register BNODE *old;
+copy_bnode (register BNODE *old)
 {
 	register BNODE *left, *right;
 
@@ -87,8 +83,7 @@ register BNODE *old;
 }
 
 #ifdef DEBUG
-check_bnode (b)
-BNODE *b;
+void check_bnode (BNODE *b)
 {
 	static int mark = 0, depth = 0;
 

@@ -1,4 +1,15 @@
-eqntott: convert boolean logic equation to truth table.
+# eqntott: convert boolean logic equation to truth table.
+
+I have converted the code from K&R style function syntax to ANSI to
+please the modern C compilers.
+
+Grab latest Zig compiler and run:
+
+```
+$ zig build
+```
+
+### Original README by Peter Scott
 
 See the man page for more information. There are some example input
 files in the examples/ directory. To install, do the usual:

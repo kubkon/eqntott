@@ -32,8 +32,7 @@
 #include "x.h"
 extern int ninputs, noutputs;
 
-int cmppt (a, b)
-PTERM *a[], *b[];
+int cmppt (PTERM *a[], PTERM *b[])
 /*
  * compare product terms indirectly pointed to by a and b.
  */
@@ -59,9 +58,7 @@ PTERM *a[], *b[];
 	return (0);
 }
 
-int cmpv (x, y, n)
-register BIT *x, *y;
-int n;
+int cmpv (register BIT *x, register BIT *y, int n)
 /*
  * return -1 if x[i] = y[i] for 0 <= i < n;
  * return j>-1 if x[i] = y[i] for all i except i != j;
@@ -81,8 +78,7 @@ int n;
 }
 
 int 
-cmpptx (a, b)
-PTERM *a[], *b[];
+cmpptx (PTERM *a[], PTERM *b[])
 /*
  * compare index of product terms indirectly pointed to by a and b.
  */
@@ -95,8 +91,7 @@ PTERM *a[], *b[];
 }
 
 int 
-cmppth (a, b)
-PTERM *a[], *b[];
+cmppth (PTERM *a[], PTERM *b[])
 /*
  * compare andhash of product terms indirectly pointed to by a and b.
  */
@@ -171,8 +166,7 @@ PTERM *find_pterm (PTERM *pt, PTERM *pts[], int npts)
 	return (NIL_PTERM);
 }
 
-orpt (pt1, pt2)
-PTERM *pt1, *pt2;
+void orpt (PTERM *pt1, PTERM *pt2)
 /*
  * My job is to output BIT-wise "or" the ptor arrays of PTERMS
  * "pt1" and "pt2" and leave the result in the ptor array
@@ -189,9 +183,7 @@ PTERM *pt1, *pt2;
 }
 
 long
-pthash (inv, n)
-BIT *inv;
-int n;
+pthash (BIT *inv, int n)
 /*
  * form the sum of no more than the first 20 elements of inv:
  * sum inv[i] * 3 ** (i - 1);
@@ -209,9 +201,7 @@ int n;
 }
 
 int 
-ptindex (inv, n)
-BIT *inv;
-int n;
+ptindex (BIT *inv, int n)
 /*
  * I return the number of 1's in the "n" elements of "inv".
  */

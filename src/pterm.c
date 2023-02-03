@@ -33,7 +33,7 @@ static PTERM *freePtr = 0;
 extern int ninputs, noutputs;
 
 static
-get_free ()
+void get_free ()
 {
 	register PTERM *pterms;
 	register int i;
@@ -65,8 +65,7 @@ get_free ()
 }
 
 PTERM *
-copy_pterm (pterm)
-PTERM *pterm;
+copy_pterm (PTERM *pterm)
 {
 	register BIT *b, *c;
 	register int i;
@@ -88,8 +87,7 @@ PTERM *pterm;
 }
 
 PTERM *
-new_pterm (next)
-PTERM *next;
+new_pterm (PTERM *next)
 {
 	register PTERM *pterm;
 	register BIT *b;
@@ -108,8 +106,7 @@ PTERM *next;
 }
 
 PTERM *
-free_pterm (pterm)
-PTERM *pterm;
+free_pterm (PTERM *pterm)
 {
 	PTERM *next;
 /* added 12/10/84 by Richard Rudell per R. Newton's suggestion */

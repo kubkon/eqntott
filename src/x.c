@@ -20,9 +20,7 @@ PTERM *pts[NPTERMS], *read_ones();
 
 extern char planame[];
 
-main (argc, argv)
-int argc; 
-char *argv[];
+int main (int argc, char *argv[])
 {
 	int i, npts;
 
@@ -128,9 +126,7 @@ char *argv[];
 }
 
 int
-grind (pts, npts)
-PTERM *pts[];
-int npts;
+grind (PTERM *pts[], int npts)
 {
 	PTERM *pt, *ptexprs[NOUTPUTS];
 	int pass, changed, o, last;

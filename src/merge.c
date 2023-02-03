@@ -17,9 +17,7 @@ extern char *ego;
 
 #include "hdr.h"
 
-find_index (pts, npts, x, start, finish)
-PTERM *pts[];
-int npts, x, *start, *finish;
+void find_index (PTERM *pts[], int npts, int x, int *start, int *finish)
 /*
  * This function searches the index components of "pts" looking
  * for the first and last pterms with index level "x".
@@ -75,9 +73,7 @@ int npts, x, *start, *finish;
 
 
 int
-trymerge (pts, npts, i, j)
-register PTERM *pts[];
-register int i, j, npts;
+trymerge (register PTERM *pts[], register int npts, register int i, register int j)
 {
 	int m;
 
@@ -119,9 +115,7 @@ register int i, j, npts;
 }
 
 int 
-merge (pts, npts)
-PTERM *pts[];
-int npts;
+merge (PTERM *pts[], int npts)
 /*
  * My job is to find pairs of adjacent PTERM's with identical
  * outputs, add a PTERM on the end with those same outputs

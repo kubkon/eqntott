@@ -11,9 +11,7 @@
  */
 
 int
-hash (s, hshsiz)
-register char *s;
-int hshsiz;
+hash (register char *s, int hshsiz)
 {
 	register long hash = 0;
 	int retval;
@@ -44,14 +42,7 @@ int hshsiz;
  */
 
 char *
-hsearch (key, base, nel, width, compar, open, slot)
-char *key;
-register char *base;
-int nel;
-register unsigned width;
-int (*compar)();
-int (*open)();
-char **slot;
+hsearch (char *key, register char *base, int nel, register unsigned width, int (*compar)(), int (*open)(), char **slot)
 {
 	register int i = width * hash (key, nel);
 	int nnel;

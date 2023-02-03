@@ -11,9 +11,7 @@
 
 extern int ninputs;
 
-int duple (pts, npts)
-PTERM *pts[];
-int npts;
+int duple (PTERM *pts[], int npts)
 {
 	int cmppth (), cmpv ();
 	register int i, k;

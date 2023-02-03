@@ -9,9 +9,7 @@
 #include <stdio.h>
 #include "x.h"
 
-int rmcvd (pts, npts)
-PTERM *pts[];
-int npts;
+int rmcvd (PTERM *pts[], int npts)
 /*
  * I remove PTERM's with the "covered" bit set, and return new
  * number of PTERMS in "pts".
