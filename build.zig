@@ -15,12 +15,22 @@ pub fn build(b: *std.build.Builder) void {
     lib.linkLibC();
     lib.install();
 
+    // const exe = b.addExecutable(.{
+    //     .name = "eqntott",
+    //     .target = target,
+    //     .optimize = opt,
+    // });
+    // exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
+    // exe.linkLibrary(lib);
+    // exe.linkLibC();
+    // exe.install();
+
     const exe = b.addExecutable(.{
         .name = "eqntott",
+        .root_source_file = .{ .path = "eqntott/eqntott.zig" },
         .target = target,
         .optimize = opt,
     });
-    exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
     exe.linkLibrary(lib);
     exe.linkLibC();
     exe.install();
