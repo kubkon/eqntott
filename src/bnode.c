@@ -28,6 +28,40 @@
 #define CHUNK 1024
 static BNODE *freePtr = 0;
 
+#ifdef DEBUG
+void check_bnode (BNODE *b)
+{
+	static int mark = 0, depth = 0;
+
+	if (!depth++)
+		mark++;
+
+	if (b->mark == mark) {
+		fprintf (stderr, "CYCLIC BNODE GRAPH\n");
+		exit (1);
+	}
+	b->mark = mark;
+	switch (b->value) {
+	case ZERO:
+	case ONE:
+	case DONTCARE:
+		break;
+	case AND:
+	case OR:
+		check_bnode (b->left);
+		check_bnode (b->right);
+		break;
+	case NOT:
+		check_bnode (b->left);
+		break;
+	default:
+		break;
+	}
+	depth--;
+	return;
+}
+#endif
+
 static
 void get_free ()
 {
@@ -81,37 +115,3 @@ copy_bnode (register BNODE *old)
 	right = old->right ? copy_bnode (old->right) : NIL_BNODE;
 	return (new_bnode (old->value, left, right));
 }
-
-#ifdef DEBUG
-void check_bnode (BNODE *b)
-{
-	static int mark = 0, depth = 0;
-
-	if (!depth++)
-		mark++;
-
-	if (b->mark == mark) {
-		fprintf (stderr, "CYCLIC BNODE GRAPH\n");
-		exit (1);
-	}
-	b->mark = mark;
-	switch (b->value) {
-	case ZERO:
-	case ONE:
-	case DONTCARE:
-		break;
-	case AND:
-	case OR:
-		check_bnode (b->left);
-		check_bnode (b->right);
-		break;
-	case NOT:
-		check_bnode (b->left);
-		break;
-	default:
-		break;
-	}
-	depth--;
-	return;
-}
-#endif

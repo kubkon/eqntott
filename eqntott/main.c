@@ -13,6 +13,7 @@ extern int ninputs, noutputs, nerrors;
 extern int f_flag, s_flag, need_parse, need_grind;
 extern char *ego, *key;
 extern struct Nt nts[], *outorder[], *inorder[];
+extern char *files[];	
 
 long pthash();
 BNODE *exprs[NOUTPUTS], *canon(), *ecanon();
@@ -20,12 +21,76 @@ PTERM *pts[NPTERMS], *read_ones();
 
 extern char planame[];
 
+int preprocess();
+int procargs(int, char *[]);
+void nt_init();
+int yyparse();
+
+int
+grind (PTERM *pts[], int npts)
+{
+	PTERM *pt, *ptexprs[NOUTPUTS];
+	int pass, changed, o, last;
+
+	for (o = 0; o < noutputs; o++) {
+		if (!exprs[o]) {
+			fprintf (stderr, "%s: no expression for %s\n",
+				ego, outorder[o]->name);
+			exit (1);
+		}
+	}
+	pass = 0;
+	do {
+		for (last = (changed = o = 0) - 1; o < noutputs; o++) {
+			exprs[o] = canon (exprs[o]);
+			if (s_flag && substitute (exprs[o], &exprs[o])) {
+				last = o;
+				changed++;
+				exprs[o] = canon (exprs[o]);
+			}
+		}
+	} while (changed && ++pass < NSUBSTITUTE);
+
+	if (changed) {
+		fprintf (stderr, "%s: infinite substitution loop: %s?\n", 
+			ego, outorder[last]->name);
+		return (0);
+	}
+
+	for (o = 0; o < noutputs; o++)
+		ptexprs[o] = read_ones (exprs[o], o);
+
+	/*
+	 * grind shares "pts" with read_ones (compress) so
+	 * DON'T merge the previous and next for loops.
+	 */
+
+	for (npts = o = 0; o < noutputs; o++) {
+		pt = ptexprs[o];
+		for (; pt; pt = pt->next) {
+			/*
+			 * we depend on read_ones (compress) for:
+			 * pt->andhash = pthash (pt->ptand, ninputs);
+			 * pt->cv = 0;
+			 */
+			pt->index = ptindex (pt->ptand, ninputs);
+			if (npts < NPTERMS)
+				pts[npts++] = pt;
+		}
+	}
+	npts = reduce (pts, npts);
+	return (npts);
+}
+
+int infd;
+
 int main (int argc, char *argv[])
 {
 	int i, npts;
 
-	if (procargs (argc, argv) || preprocess())
+	if (procargs (argc, argv))
 		exit (1);
+  infd = open(files[0], 0);
 	nt_init();
 	if (need_parse && yyparse())
 			nerrors++;
@@ -123,60 +188,4 @@ int main (int argc, char *argv[])
 		}
 	
 	exit (0);
-}
-
-int
-grind (PTERM *pts[], int npts)
-{
-	PTERM *pt, *ptexprs[NOUTPUTS];
-	int pass, changed, o, last;
-
-	for (o = 0; o < noutputs; o++) {
-		if (!exprs[o]) {
-			fprintf (stderr, "%s: no expression for %s\n",
-				ego, outorder[o]->name);
-			exit (1);
-		}
-	}
-	pass = 0;
-	do {
-		for (last = (changed = o = 0) - 1; o < noutputs; o++) {
-			exprs[o] = canon (exprs[o]);
-			if (s_flag && substitute (exprs[o], &exprs[o])) {
-				last = o;
-				changed++;
-				exprs[o] = canon (exprs[o]);
-			}
-		}
-	} while (changed && ++pass < NSUBSTITUTE);
-
-	if (changed) {
-		fprintf (stderr, "%s: infinite substitution loop: %s?\n", 
-			ego, outorder[last]->name);
-		return (0);
-	}
-
-	for (o = 0; o < noutputs; o++)
-		ptexprs[o] = read_ones (exprs[o], o);
-
-	/*
-	 * grind shares "pts" with read_ones (compress) so
-	 * DON'T merge the previous and next for loops.
-	 */
-
-	for (npts = o = 0; o < noutputs; o++) {
-		pt = ptexprs[o];
-		for (; pt; pt = pt->next) {
-			/*
-			 * we depend on read_ones (compress) for:
-			 * pt->andhash = pthash (pt->ptand, ninputs);
-			 * pt->cv = 0;
-			 */
-			pt->index = ptindex (pt->ptand, ninputs);
-			if (npts < NPTERMS)
-				pts[npts++] = pt;
-		}
-	}
-	npts = reduce (pts, npts);
-	return (npts);
 }

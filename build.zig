@@ -2,14 +2,27 @@ const std = @import("std");
 
 pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const opt = b.standardOptimizeOption(.{});
 
-    const exe = b.addExecutable("eqntott", null);
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
+    const lib = b.addStaticLibrary(.{
+        .name = "eqntott",
+        .target = target,
+        .optimize = opt,
+    });
+    lib.addIncludePath("include");
+    lib.addCSourceFiles(sources, &[_][]const u8{"-std=c11"});
+    lib.installHeadersDirectory("include", "");
+    lib.linkLibC();
+    lib.install();
+
+    const exe = b.addExecutable(.{
+        .name = "eqntott",
+        .target = target,
+        .optimize = opt,
+    });
+    exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
+    exe.linkLibrary(lib);
     exe.linkLibC();
-    exe.addIncludePath("src");
-    exe.addCSourceFiles(sources, &[_][]const u8{"-std=c11"});
     exe.install();
 
     const run_cmd = exe.run();
@@ -42,7 +55,6 @@ const sources: []const []const u8 = &.{
     "src/rmcvd.c",
     "src/substitute.c",
     "src/version.c",
-    "src/x.c",
     "src/yystuff.c",
-    "src/y.tab.c",
+    "src/y_tab.c",
 };

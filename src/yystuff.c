@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "x.h"
-#include "y.tab.h"
+#include "y_tab.h"
 
 int atoi();
 
@@ -28,6 +28,7 @@ int atoi();
 int nerrors = 0;		/* number of syntax errors */
 char yytext[MAXSTR];		/* yylex's text buffer */
 
+extern int infd;
 static char yyfname[MAXFNAME];	/* current input file name */
 static char yyinbuf[NINBUF];	/* input buffer */
 static int yyninbuf = 0;	/* amount currently in "yyinbuf" */
@@ -44,7 +45,7 @@ yygetc()
 	if (yynunbuf)
 		return (yyunbuf[yynunbuf--]);
 	else	if (++yycharno >= yyninbuf)
-			if (0 < (yyninbuf = read (0, yyinbuf, NINBUF)))
+			if (0 < (yyninbuf = read (infd, yyinbuf, NINBUF)))
 				return ((int) yyinbuf[yycharno=0]);
 			else	return (EOF);
 		else	return ((int) yyinbuf[yycharno]);
@@ -92,19 +93,21 @@ void yyerror (char *yyerrmsg)
 
 	yytrail = yyr-- >= yyninbuf;	/* end of line in next buffer? */
 
+  if (!yyr) return;
+
 	/* measure length of line to be printed */
 	for (yylen = 0, yyq = yyp; yyq <= yyr; yyq++)
-		switch (yyinbuf[yyq]) {
-		case '\t':
-			yylen = (1 + yylen / 8) * 8;
-			break;
-		case '\b':
-			yylen--;
-			break;
-		default:
-			yylen++;
-			break;
-		}
+      switch (yyinbuf[yyq]) {
+      case '\t':
+        yylen = (1 + yylen / 8) * 8;
+        break;
+      case '\b':
+        yylen--;
+        break;
+      default:
+        yylen++;
+        break;
+      }
 
 	if (yylen >= 72)
 		/*

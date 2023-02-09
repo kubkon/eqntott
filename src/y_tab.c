@@ -123,7 +123,7 @@ typedef union YYSTYPE
 	int intval;
 }
 /* Line 187 of yacc.c.  */
-#line 127 "y.tab.c"
+#line 127 "y_tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -136,7 +136,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 140 "y.tab.c"
+#line 140 "y_tab.c"
 
 #ifdef short
 # undef short
@@ -1428,7 +1428,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1432 "y.tab.c"
+#line 1432 "y_tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
