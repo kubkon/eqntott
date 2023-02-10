@@ -22,6 +22,7 @@ extern "c" fn yyparse() void;
 extern "c" fn canon(*c.BNODE) *c.BNODE;
 extern "c" fn read_ones(*c.BNODE, i32) *c.PTERM;
 extern "c" fn putpla([*]*c.PTERM, i32) void;
+extern "c" fn cmppt(?*const anyopaque, ?*const anyopaque) i32;
 
 const usage =
     \\Usage: eqntott <file>
@@ -96,11 +97,35 @@ pub fn main() !void {
     try stdout.print(".i {d}\n", .{ninputs});
     try stdout.print(".o {d}\n", .{noutputs});
     try stdout.print(".p {d}\n", .{npts});
-    // try writeTruthTable(pts, npts, stdout);
-    putpla(&pts, npts);
+    try writeTruthTable(&pts, npts, stdout);
     try stdout.writeAll(".e\n");
 }
 
-// fn writeTruthTable(pterms: [c.NPTERMS]*c.PTERM, npts: i32, writer: anytype) !void {
+fn writeTruthTable(pterms: [*]*c.PTERM, npts: i32, writer: anytype) !void {
+    c.qsort(@intToPtr(?*anyopaque, @ptrToInt(pterms)), @intCast(usize, npts), @sizeOf(*c.PTERM), cmppt);
+    var i: usize = 0;
+    while (i < npts) : (i += 1) {
+        try writeRow(pterms[i], writer);
+    }
+}
 
-// }
+fn writeRow(pterm: *c.PTERM, writer: anytype) !void {
+    const inc: [3]u8 = .{ '0', '1', '-' };
+    const outc: [3]u8 = .{ '0', '1', 'x' };
+
+    var i: usize = 0;
+    while (i < ninputs) : (i += 1) {
+        var buffer: [2]u8 = .{ inc[@intCast(usize, pterm.ptand[i])], 0 };
+        try writer.print("{s}", .{&buffer});
+    }
+
+    try writer.writeAll(" ");
+
+    i = 0;
+    while (i < noutputs) : (i += 1) {
+        var buffer: [2]u8 = .{ outc[@intCast(usize, pterm.ptor[i])], 0 };
+        try writer.print("{s}", .{&buffer});
+    }
+
+    try writer.writeByte('\n');
+}
