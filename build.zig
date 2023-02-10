@@ -15,34 +15,47 @@ pub fn build(b: *std.build.Builder) void {
     lib.linkLibC();
     lib.install();
 
-    // const exe = b.addExecutable(.{
-    //     .name = "eqntott",
-    //     .target = target,
-    //     .optimize = opt,
-    // });
-    // exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
-    // exe.linkLibrary(lib);
-    // exe.linkLibC();
-    // exe.install();
+    {
+        const exe = b.addExecutable(.{
+            .name = "eqntott",
+            .target = target,
+            .optimize = opt,
+        });
+        exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
+        exe.linkLibrary(lib);
+        exe.linkLibC();
+        exe.install();
 
-    const exe = b.addExecutable(.{
-        .name = "eqntott",
-        .root_source_file = .{ .path = "eqntott/eqntott.zig" },
-        .target = target,
-        .optimize = opt,
-    });
-    exe.linkLibrary(lib);
-    exe.linkLibC();
-    exe.install();
+        const run_cmd = exe.run();
+        run_cmd.step.dependOn(b.getInstallStep());
+        if (b.args) |args| {
+            run_cmd.addArgs(args);
+        }
 
-    const run_cmd = exe.run();
-    run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
+        const run_step = b.step("run-eqntott", "Run example program parser");
+        run_step.dependOn(&run_cmd.step);
     }
 
-    const run_step = b.step("run", "Run example program parser");
-    run_step.dependOn(&run_cmd.step);
+    {
+        const exe = b.addExecutable(.{
+            .name = "eqntott-zig",
+            .root_source_file = .{ .path = "eqntott/eqntott.zig" },
+            .target = target,
+            .optimize = opt,
+        });
+        exe.linkLibrary(lib);
+        exe.linkLibC();
+        exe.install();
+
+        const run_cmd = exe.run();
+        run_cmd.step.dependOn(b.getInstallStep());
+        if (b.args) |args| {
+            run_cmd.addArgs(args);
+        }
+
+        const run_step = b.step("run-zig-eqntott", "Run example program parser");
+        run_step.dependOn(&run_cmd.step);
+    }
 }
 
 const sources: []const []const u8 = &.{

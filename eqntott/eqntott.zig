@@ -4,16 +4,24 @@ const mem = std.mem;
 
 const c = @cImport({
     @cInclude("x.h");
+    @cInclude("hdr.h");
 });
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 export var infd: std.c.fd_t = -1;
 export var exprs: [c.NOUTPUTS]*c.BNODE = undefined;
+export var pts: [c.NPTERMS]*c.PTERM = undefined;
 
 extern var ninputs: i32;
 extern var noutputs: i32;
+extern var inorder: [*]*c.Nt;
+extern var outorder: [*]*c.Nt;
+
 extern "c" fn yyparse() void;
+extern "c" fn canon(*c.BNODE) *c.BNODE;
+extern "c" fn read_ones(*c.BNODE, i32) *c.PTERM;
+extern "c" fn putpla([*]*c.PTERM, i32) void;
 
 const usage =
     \\Usage: eqntott <file>
@@ -31,6 +39,7 @@ pub fn main() !void {
     const all_args = try std.process.argsAlloc(arena);
     const args = all_args[1..];
 
+    const stdout = std.io.getStdOut().writer();
     const stderr = std.io.getStdOut().writer();
 
     var file_path: ?[]const u8 = null;
@@ -55,9 +64,43 @@ pub fn main() !void {
     infd = file.handle;
     yyparse();
 
-    var i: i32 = 0;
-    while (i < noutputs) : (i += 1) {
-        const expr = exprs[@intCast(usize, i)];
-        std.log.warn("expr = {any}", .{expr.*});
+    var ptexprs: [c.NOUTPUTS]*c.PTERM = undefined;
+
+    var o: i32 = 0;
+    while (o < noutputs) : (o += 1) {
+        const expr = &exprs[@intCast(usize, o)];
+        std.log.warn("BEFORE: expr = {any}", .{expr.*.*});
+        expr.* = canon(expr.*);
+        std.log.warn("AFTER: expr = {any}", .{expr.*.*});
+        ptexprs[@intCast(usize, o)] = read_ones(expr.*, o);
+        std.log.warn("ptexpr = {any}", .{ptexprs[@intCast(usize, o)].*});
     }
+
+    // Previous and following loops cannot be merged as `pts` is overwritten by both.
+    var npts: i32 = 0;
+    o = 0;
+    while (o < noutputs) : (o += 1) {
+        var pt = ptexprs[@intCast(usize, o)];
+        while (true) {
+            pt.index = @intCast(i16, c.ptindex(pt.ptand, ninputs));
+            if (npts < c.NPTERMS) {
+                pts[@intCast(usize, npts)] = pt;
+                npts += 1;
+            }
+            if (pt.next) |next| {
+                pt = next;
+            } else break;
+        }
+    }
+
+    try stdout.print(".i {d}\n", .{ninputs});
+    try stdout.print(".o {d}\n", .{noutputs});
+    try stdout.print(".p {d}\n", .{npts});
+    // try writeTruthTable(pts, npts, stdout);
+    putpla(&pts, npts);
+    try stdout.writeAll(".e\n");
 }
+
+// fn writeTruthTable(pterms: [c.NPTERMS]*c.PTERM, npts: i32, writer: anytype) !void {
+
+// }
