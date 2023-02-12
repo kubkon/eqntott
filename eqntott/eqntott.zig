@@ -70,11 +70,8 @@ pub fn main() !void {
     var o: i32 = 0;
     while (o < noutputs) : (o += 1) {
         const expr = &exprs[@intCast(usize, o)];
-        std.log.warn("BEFORE: expr = {any}", .{expr.*.*});
         expr.* = canon(expr.*);
-        std.log.warn("AFTER: expr = {any}", .{expr.*.*});
         ptexprs[@intCast(usize, o)] = read_ones(expr.*, o);
-        std.log.warn("ptexpr = {any}", .{ptexprs[@intCast(usize, o)].*});
     }
 
     // Previous and following loops cannot be merged as `pts` is overwritten by both.
