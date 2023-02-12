@@ -5,7 +5,7 @@ pub fn build(b: *std.build.Builder) void {
     const opt = b.standardOptimizeOption(.{});
 
     const lib = b.addStaticLibrary(.{
-        .name = "eqntott",
+        .name = "eqntott-lib",
         .target = target,
         .optimize = opt,
     });
