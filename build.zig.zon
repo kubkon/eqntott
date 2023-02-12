@@ -1,0 +1,4 @@
+.{
+    .name = "libeqntott",
+    .version = "0.0.1",
+}
