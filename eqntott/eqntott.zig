@@ -114,16 +114,14 @@ fn writeRow(pterm: *c.PTERM, writer: anytype) !void {
 
     var i: usize = 0;
     while (i < ninputs) : (i += 1) {
-        var buffer: [2]u8 = .{ inc[@intCast(usize, pterm.ptand[i])], 0 };
-        try writer.print("{s}", .{&buffer});
+        try writer.writeByte(inc[@intCast(usize, pterm.ptand[i])]);
     }
 
     try writer.writeAll(" ");
 
     i = 0;
     while (i < noutputs) : (i += 1) {
-        var buffer: [2]u8 = .{ outc[@intCast(usize, pterm.ptor[i])], 0 };
-        try writer.print("{s}", .{&buffer});
+        try writer.writeByte(outc[@intCast(usize, pterm.ptor[i])]);
     }
 
     try writer.writeByte('\n');
