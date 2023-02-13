@@ -17,6 +17,7 @@ extern var ninputs: i32;
 extern var noutputs: i32;
 extern var inorder: [*]*c.Nt;
 extern var outorder: [*]*c.Nt;
+extern var yyfile: *std.c.FILE;
 
 extern "c" fn yyparse() void;
 extern "c" fn canon(*c.BNODE) *c.BNODE;
@@ -43,7 +44,7 @@ pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
     const stderr = std.io.getStdOut().writer();
 
-    var file_path: ?[]const u8 = null;
+    var file_path: ?[:0]const u8 = null;
     var arg_index: usize = 0;
     while (arg_index < args.len) : (arg_index += 1) {
         const arg = args[arg_index];
@@ -60,9 +61,10 @@ pub fn main() !void {
         return stderr.writeAll("fatal: no input file specified\n\n");
     }
 
-    const file = try fs.cwd().openFile(file_path.?, .{});
-    defer file.close();
-    infd = file.handle;
+    yyfile = std.c.fopen(file_path.?, "r") orelse {
+        return stderr.print("fatal: could not open file {s}\n\n", .{file_path.?});
+    };
+    defer _ = std.c.fclose(yyfile);
     yyparse();
 
     var ptexprs: [c.NOUTPUTS]*c.PTERM = undefined;

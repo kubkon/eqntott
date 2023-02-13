@@ -14,6 +14,7 @@ extern int f_flag, s_flag, need_parse, need_grind;
 extern char *ego, *key;
 extern struct Nt nts[], *outorder[], *inorder[];
 extern char *files[];	
+extern FILE* yyfile;
 
 long pthash();
 BNODE *exprs[NOUTPUTS], *canon(), *ecanon();
@@ -82,15 +83,13 @@ grind (PTERM *pts[], int npts)
 	return (npts);
 }
 
-int infd;
-
 int main (int argc, char *argv[])
 {
 	int i, npts;
 
 	if (procargs (argc, argv))
 		exit (1);
-  infd = open(files[0], 0);
+  yyfile = fopen(files[0], "r");
 	nt_init();
 	if (need_parse && yyparse())
 			nerrors++;
