@@ -10,10 +10,13 @@ pub fn build(b: *std.build.Builder) void {
         .optimize = opt,
     });
     lib.addIncludePath("include");
-    lib.addCSourceFiles(sources, &[_][]const u8{"-std=c11"});
+    lib.addCSourceFiles(sources, &[_][]const u8{
+        "-std=gnu89",
+        "-Wno-incompatible-function-pointer-types",
+    });
     lib.installHeadersDirectory("include", "");
     lib.linkLibC();
-    lib.install();
+    b.installArtifact(lib);
 
     {
         const exe = b.addExecutable(.{
@@ -21,12 +24,12 @@ pub fn build(b: *std.build.Builder) void {
             .target = target,
             .optimize = opt,
         });
-        exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=c11"});
+        exe.addCSourceFile("eqntott/main.c", &[_][]const u8{"-std=gnu89"});
         exe.linkLibrary(lib);
         exe.linkLibC();
-        exe.install();
+        b.installArtifact(exe);
 
-        const run_cmd = exe.run();
+        const run_cmd = b.addRunArtifact(exe);
         run_cmd.step.dependOn(b.getInstallStep());
         if (b.args) |args| {
             run_cmd.addArgs(args);
@@ -45,9 +48,9 @@ pub fn build(b: *std.build.Builder) void {
         });
         exe.linkLibrary(lib);
         exe.linkLibC();
-        exe.install();
+        b.installArtifact(exe);
 
-        const run_cmd = exe.run();
+        const run_cmd = b.addRunArtifact(exe);
         run_cmd.step.dependOn(b.getInstallStep());
         if (b.args) |args| {
             run_cmd.addArgs(args);
